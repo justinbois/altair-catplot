@@ -4,7 +4,14 @@ import pandas as pd
 import altair as alt
 from altair.utils.schemapi import Undefined, UndefinedType
 
-from utils import *
+from .utils import (_check_catplot_transform,
+                    _check_catplot_sort,
+                    _check_mark,
+                    _make_altair_encoding,
+                    _get_column_name,
+                    _get_data_type,
+                    _make_color_encoding_ecdf,
+                    _make_color_encoding_box_jitter)
 
 
 def _jitter_plot(data, height, width, mark, encoding, jitter_width, sort,
@@ -16,6 +23,8 @@ def _jitter_plot(data, height, width, mark, encoding, jitter_width, sort,
       nominal_axis_values, horizontal, zero) = encoding_tuple
 
     _check_catplot_sort(data, cat, sort)
+
+    sort = _jitter_sort(data, cat, sort, horizontal)
 
     mark_jitter, mark_text = _parse_mark_jitter(mark, horizontal)
 
@@ -42,7 +51,19 @@ def _jitter_plot(data, height, width, mark, encoding, jitter_width, sort,
 
     return alt.layer(chart_jitter, chart_text)
 
-    
+
+def _jitter_sort(data, cat, sort, horizontal):
+    """Generate sort 
+    """
+    if sort == Undefined:
+        sort = list(pd.Categorical(data[cat]))
+
+    if horizontal:
+        return list(reversed(sort))
+    else:
+        return sort
+
+
 def _jitter(x, sort, jitter_width):
     """Make x-coordinates for a jitter plot."""
     if sort == Undefined:
@@ -55,6 +76,7 @@ def _jitter(x, sort, jitter_width):
             + np.random.uniform(low=-jitter_width,
                                 high=jitter_width,
                                 size=len(x)))
+
 
 def _check_altair_jitter_input(data, height, width, mark, encoding,
                                jitter_width):

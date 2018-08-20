@@ -18,7 +18,7 @@ install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
 dependency_links = [x.strip().replace('git+', '') for x in all_reqs if x.startswith('git+')]
 
 setup(
-    name='altiar_catplot',
+    name='altair_catplot',
     version=__version__,
     description='Utility to generate plots with categorical variables using Altair.',
     long_description=long_description,
