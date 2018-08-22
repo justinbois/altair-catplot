@@ -4,7 +4,7 @@
 
 # Force showing deprecation warnings.
 
-from . import catplot
+from .catplot import catplot
 
 __author__ = """Justin Bois"""
 __email__ = 'bois@caltech.edu'

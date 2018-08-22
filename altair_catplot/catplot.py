@@ -6,10 +6,11 @@ import pandas as pd
 import altair as alt
 from altair.utils.schemapi import Undefined, UndefinedType
 
-from utils import _check_catplot_transform
-from ecdf import _ecdf_plot
-from box import _box_plot
-from jitter import _jitter_plot
+from .utils import _check_catplot_transform
+from .ecdf import _ecdf_plot
+from .box import _box_plot
+from .jitter import _jitter_plot
+from .jitterbox import _jitterbox_plot
 
 
 def catplot(data=None,
@@ -20,6 +21,8 @@ def catplot(data=None,
             transform=None,
             sort=Undefined,
             jitter_width=0.2,
+            box_mark=Undefined,
+            whisker_mark=Undefined,
             **kwargs):
 
     transform = _check_catplot_transform(transform)
@@ -50,6 +53,8 @@ def catplot(data=None,
                          height, 
                          width, 
                          mark, 
+                         box_mark,
+                         whisker_mark,
                          encoding, 
                          sort, 
                          **kwargs)
@@ -62,8 +67,14 @@ def catplot(data=None,
                             jitter_width, 
                             sort, 
                             **kwargs)
-    elif transform == ['box', 'jitter']:
-        raise NotImplementedError('box-jitter plots not yet implemented.')
-
-
-
+    elif transform == 'jitterbox':
+        return _jitterbox_plot(data,
+                               height, 
+                               width, 
+                               mark, 
+                               box_mark,
+                               whisker_mark,
+                               encoding, 
+                               jitter_width,
+                               sort, 
+                               **kwargs)

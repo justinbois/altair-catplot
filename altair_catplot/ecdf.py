@@ -4,7 +4,14 @@ import pandas as pd
 import altair as alt
 from altair.utils.schemapi import Undefined, UndefinedType
 
-from utils import *
+from .utils import (_check_catplot_transform,
+                    _check_catplot_sort,
+                    _check_mark,
+                    _make_altair_encoding,
+                    _get_column_name,
+                    _get_data_type,
+                    _make_color_encoding_ecdf,
+                    _make_color_encoding_box_jitter)
 
 
 def _ecdf_plot(data, height, width, mark, encoding, complementary, 
@@ -265,24 +272,25 @@ def _make_xy_encoding_ecdf(encoding, complementary):
     if 'x' not in encoding or _is_ecdf_axis(encoding['x']):
         if 'y' not in encoding or _is_ecdf_axis(encoding['y']):
             raise RuntimeError(err)
-        if isinstance(encoding['x'], alt.X):
+
+        if 'x' in encoding:
             x = _make_altair_encoding(encoding['x'], alt.X)
             x.shorthand = '__' + title + ':Q'
         else:
             x = _make_altair_encoding('__' + title + ':Q', alt.X)
-        y = _make_altair_encoding(encoding['y'], alt.Y)
         if x.title is Undefined:
             x.title = title
+        y = _make_altair_encoding(encoding['y'], alt.Y)
         val = _get_column_name(y)
     elif 'y' not in encoding or _is_ecdf_axis(encoding['y']):
-        x = _make_altair_encoding(encoding['x'], alt.X)
-        if isinstance(encoding['y'], alt.Y):
+        if 'y' in encoding:
             y = _make_altair_encoding(encoding['y'], alt.Y)
             y.shorthand = '__' + title + ':Q'
         else:
             y = _make_altair_encoding('__' + title + ':Q', alt.Y)
         if y.title is Undefined:
             y.title = title
+        x = _make_altair_encoding(encoding['x'], alt.X)
         val = _get_column_name(x)
     else:
         raise RuntimeError(err)

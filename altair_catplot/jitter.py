@@ -56,7 +56,7 @@ def _jitter_sort(data, cat, sort, horizontal):
     """Generate sort 
     """
     if sort == Undefined:
-        sort = list(pd.Categorical(data[cat]))
+        sort = list(data[cat].unique())
 
     if horizontal:
         return list(reversed(sort))

@@ -1,6 +1,7 @@
 import altair as alt
 from altair.utils.schemapi import Undefined, UndefinedType
 
+
 def _check_catplot_transform(transform):
     """Check to make sure transform is valid for catplot.
 
@@ -37,14 +38,14 @@ def _check_catplot_transform(transform):
                          'colored_eccdf',
                          'box',
                          'jitter',
-                         ['box', 'jitter']]:
+                         'jitterbox']:
         raise RuntimeError("""Invalid transform. Valid possibilities are:
              'ecdf'
              'ecdf_collection'
              'colored_ecdf'
              'box'
              'jitter'
-             ['box', 'jitter']""")
+             'jitterbox'""")
 
     return transform
 
@@ -103,15 +104,15 @@ def _get_data_type(encoding):
 def _make_color_encoding_ecdf(encoding, sort):
     """Make color encodings for an ECDF plot."""
     if 'color' in encoding:
-        color = _make_altair_encoding(encoding['color'],
-                    alt.Color, 
+        color = _make_altair_encoding(encoding['color'], alt.Color)
+        color = _make_altair_encoding(color, alt.Color, 
                     scale=_make_altair_encoding(
-                                encoding['color']._kwds['scale'],
+                                color._kwds['scale'],
                                 encoding=alt.Scale, 
                                 domain=sort))
         color_data_type = _get_data_type(color)
         if color_data_type == UndefinedType:
-            color = _make_altair_encoding(encoding['color'],
+            color = _make_altair_encoding(color,
                                           alt.Color,
                                           type='nominal')
         cat = _get_column_name(color)
