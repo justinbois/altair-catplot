@@ -15,9 +15,9 @@ The box plots and jitter plots I have in mind apply to the case where one axis i
 
 ## Installation
 
-You can install altair-catplot using pip.
+You can install altair-catplot using pip. You will need to have a recent version of Altair and all of its dependencies installed.
 
-    pip install altair-catplot
+    pip install altair_catplot
 
 ## Usage
 
