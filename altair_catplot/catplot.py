@@ -23,9 +23,17 @@ def catplot(data=None,
             jitter_width=0.2,
             box_mark=Undefined,
             whisker_mark=Undefined,
+            box_overlay=False,
             **kwargs):
+    """Generate an Altair plot where one axis is categorical and the other
+    quantitative.
 
-    transform = _check_catplot_transform(transform)
+    Parameters
+    ----------
+
+    """
+
+    transform, mark = _check_catplot_transform(transform, mark)
 
     if 'cdf' in transform:
         if 'eccdf' in transform:
@@ -76,5 +84,6 @@ def catplot(data=None,
                                whisker_mark,
                                encoding, 
                                jitter_width,
-                               sort, 
+                               sort,
+                               box_overlay, 
                                **kwargs)

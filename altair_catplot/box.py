@@ -33,7 +33,8 @@ def _box_plot(data, height, width, mark, box_mark, whisker_mark, encoding,
 
     # Marks
     (mark_box, mark_median, mark_whisker, mark_cap, mark_outliers,
-     white_median) = _parse_mark_box(mark, box_mark, whisker_mark, size)
+     white_median) = _parse_mark_box(mark, box_mark, whisker_mark, size, 
+                                     False)
 
     # Adjust encoding for white median
     if white_median:
@@ -139,9 +140,15 @@ def _box_dataframe(data, cat, val):
     return df_box, df_outliers
 
 
-def _parse_mark_box(mark, box_mark, whisker_mark, size):
+def _parse_mark_box(mark, box_mark, whisker_mark, size, jitterbox):
     """Parse mark for box plot."""
+
     # The box
+    if jitterbox and (box_mark == Undefined or 'filled' not in box_mark):
+        if box_mark == Undefined:
+            box_mark = dict(type='bar', size=size, filled=False)
+        else:
+            box_mark['filled'] = False
     if box_mark is None or box_mark == Undefined:
         mark_box = alt.MarkDef(type='bar', size=size)
     elif type(box_mark) != dict:
@@ -155,13 +162,15 @@ def _parse_mark_box(mark, box_mark, whisker_mark, size):
         if 'size' in box_mark:
             size = box_mark['size']
             del box_mark['size']
+        if jitterbox and 'filled' not in box_mark:
+            box_mark['filled'] = False
         mark_box = alt.MarkDef(type='bar', size=size, **box_mark)
 
     # Check whiskers
     strokeWidth = Undefined
     if whisker_mark is None or whisker_mark == Undefined:
         mark_whisker = alt.MarkDef(type='rule')
-        mark_cap = alt.MarkDef(type='tick', size=size/4)
+        mark_cap = alt.MarkDef(type='tick', size=size/4, opacity=1)
         whisker_mark = dict()
     elif type(whisker_mark) != dict:
         raise RuntimeError("`whisker_mark` must be a dict or None.")
@@ -177,6 +186,8 @@ def _parse_mark_box(mark, box_mark, whisker_mark, size):
         if 'strokeWidth' in whisker_mark:
             strokeWidth = whisker_mark['strokeWidth']
             del whisker_mark['strokeWidth']
+        if 'opacity' not in whisker_mark:
+            whisker_mark['opacity'] = 1
         mark_whisker = alt.MarkDef(type='rule',
                                    strokeWidth=strokeWidth, 
                                    **whisker_mark)
@@ -237,6 +248,9 @@ def _parse_encoding_box(encoding, sort):
     x = _make_altair_encoding(encoding['x'], encoding=alt.X)
     y = _make_altair_encoding(encoding['y'], encoding=alt.Y)
 
+    extra_encodings = {key: val for key, val in encoding.items()
+                            if key not in ['x', 'y', 'x2', 'y2', 'color']}
+
     if _get_data_type(x) in 'NO':
         if _get_data_type(y) != 'Q':
             raise RuntimeError(err)
@@ -261,41 +275,43 @@ def _parse_encoding_box(encoding, sort):
         # Box
         y.shorthand = 'bottom:Q'
         y2 = _make_altair_encoding('top:Q', encoding=alt.Y2)
-        encoding_box = dict(x=x, y=y, y2=y2, color=color)
+        encoding_box = dict(x=x, y=y, y2=y2, color=color, **extra_encodings)
 
         # Median
         y = y.copy(deep=True)
         y.shorthand = 'middle:Q'
-        encoding_median = dict(x=x, y=y, color=color)
+        encoding_median = dict(x=x, y=y, color=color, **extra_encodings)
 
         # Bottom whisker
         y = y.copy(deep=True)
         y2 = y2.copy(deep=True)
         y.shorthand = 'bottom_whisker:Q'
         y2.shorthand = 'bottom:Q'
-        encoding_bottom_whisker = dict(x=x, y=y, y2=y2, color=color)
+        encoding_bottom_whisker = dict(x=x, y=y, y2=y2, color=color, 
+                                       **extra_encodings)
 
         # Top whisker
         y = y.copy(deep=True)
         y2 = y2.copy(deep=True)
         y.shorthand = 'top:Q'
         y2.shorthand = 'top_whisker:Q'
-        encoding_top_whisker = dict(x=x, y=y, y2=y2, color=color)
+        encoding_top_whisker = dict(x=x, y=y, y2=y2, color=color,
+                                    **extra_encodings)
 
         # bottom cap
         y = y.copy(deep=True)
         y.shorthand = 'bottom_whisker:Q'
-        encoding_bottom_cap = dict(x=x, y=y, color=color)
+        encoding_bottom_cap = dict(x=x, y=y, color=color, **extra_encodings)
 
         # top cap
         y = y.copy(deep=True)
         y.shorthand = 'top_whisker:Q'
-        encoding_top_cap = dict(x=x, y=y, color=color)
+        encoding_top_cap = dict(x=x, y=y, color=color, **extra_encodings)
 
         # Outliers
         y = y.copy(deep=True)
         y.shorthand = val + ':Q'
-        encoding_outliers = dict(x=x, y=y, color=color)
+        encoding_outliers = dict(x=x, y=y, color=color, **extra_encodings)
     elif _get_data_type(y) in 'NO':
         if _get_data_type(x) != 'Q':
             raise RuntimeError(err)
@@ -320,41 +336,43 @@ def _parse_encoding_box(encoding, sort):
         # Box
         x.shorthand = 'bottom:Q'
         x2 = _make_altair_encoding('top:Q', encoding=alt.X2)
-        encoding_box = dict(x=x, x2=x2, y=y, color=color)
+        encoding_box = dict(x=x, x2=x2, y=y, color=color, **extra_encodings)
 
         # Median
         x = x.copy(deep=True)
         x.shorthand = 'middle:Q'
-        encoding_median = dict(x=x, y=y, color=color)
+        encoding_median = dict(x=x, y=y, color=color, **extra_encodings)
 
         # Bottom whisker
         x = x.copy(deep=True)
         x2 = x2.copy(deep=True)
         x.shorthand = 'bottom_whisker:Q'
         x2.shorthand = 'bottom:Q'
-        encoding_bottom_whisker = dict(x=x, x2=x2, y=y, color=color)
+        encoding_bottom_whisker = dict(x=x, x2=x2, y=y, color=color, 
+                                       **extra_encodings)
 
         # Top whisker
         x = x.copy(deep=True)
         x2 = x2.copy(deep=True)
         x.shorthand = 'top:Q'
         x2.shorthand = 'top_whisker:Q'
-        encoding_top_whisker = dict(x=x, x2=x2, y=y, color=color)
+        encoding_top_whisker = dict(x=x, x2=x2, y=y, color=color, 
+                                    **extra_encodings)
 
         # bottom cap
         x = x.copy(deep=True)
         x.shorthand = 'bottom_whisker:Q'
-        encoding_bottom_cap = dict(x=x, y=y, color=color)
+        encoding_bottom_cap = dict(x=x, y=y, color=color, **extra_encodings)
 
         # top cap
         x = x.copy(deep=True)
         x.shorthand = 'top_whisker:Q'
-        encoding_top_cap = dict(x=x, y=y, color=color)
+        encoding_top_cap = dict(x=x, y=y, color=color, **extra_encodings)
 
         # Outliers
         x = x.copy(deep=True)
         x.shorthand = val + ':Q'
-        encoding_outliers = dict(x=x, y=y, color=color)
+        encoding_outliers = dict(x=x, y=y, color=color, **extra_encodings)
 
     return (encoding_box, encoding_median, encoding_bottom_whisker,
             encoding_top_whisker, encoding_bottom_cap, encoding_top_cap,

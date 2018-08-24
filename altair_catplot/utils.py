@@ -2,7 +2,7 @@ import altair as alt
 from altair.utils.schemapi import Undefined, UndefinedType
 
 
-def _check_catplot_transform(transform):
+def _check_catplot_transform(transform, mark):
     """Check to make sure transform is valid for catplot.
 
     Parameters
@@ -26,6 +26,12 @@ def _check_catplot_transform(transform):
         Transform, as a sorted list if ['box', 'jitter'] or 
         ['box', swarm'].
     """
+    if mark == 'boxplot':
+        if transform not in [None, Undefined, 'boxplot', 'box']:
+            raise RuntimeError('mark and transform do not match.')
+        transform = 'box'
+        mark = Undefined
+
     if transform is None:
         raise RuntimeError('`transform` must be specified.')
 
@@ -47,7 +53,7 @@ def _check_catplot_transform(transform):
              'jitter'
              'jitterbox'""")
 
-    return transform
+    return transform, mark
 
 
 def _check_catplot_sort(df, cat, sort):
@@ -117,7 +123,7 @@ def _make_color_encoding_ecdf(encoding, sort):
                                           type='nominal')
         cat = _get_column_name(color)
     else:
-        color = None
+        color = Undefined
         cat = None
 
     return color, cat
@@ -127,11 +133,13 @@ def _make_color_encoding_box_jitter(encoding, cat, sort):
     """Make color encodings for a box plot."""
     color, _ = _make_color_encoding_ecdf(encoding, sort=sort)
     if color is None:
-        color = _make_altair_encoding(cat,
-                    alt.Color, 
-                    type='nominal',
-                    scale=_make_altair_encoding(None,
-                                                alt.Scale,
-                                                domain=sort))
+        color = Undefined
+    # if color is None:
+    #     color = _make_altair_encoding(cat,
+    #                 alt.Color, 
+    #                 type='nominal',
+    #                 scale=_make_altair_encoding(None,
+    #                                             alt.Scale,
+    #                                             domain=sort))
 
     return color

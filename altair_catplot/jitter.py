@@ -133,6 +133,9 @@ def _parse_encoding_jitter(encoding, data, sort):
     if type(encoding) != dict:
         raise RuntimeError('`encoding` must be specified as a dict.')
 
+    extra_encodings = {key: val for key, val in encoding.items()
+                            if key not in ['x', 'y', 'color']}
+
     err = ("Exactly one of encoding['x'] or encoding['y'] must have" 
             + " quantitative encoding.")
 
@@ -165,7 +168,8 @@ def _parse_encoding_jitter(encoding, data, sort):
                                           values=nominal_axis_values,
                                           grid=False)),
                         y=y, 
-                        color=color)
+                        color=color,
+                        **extra_encodings)
         encoding_text = dict(x=_make_altair_encoding(
                                 '__jitter:Q',
                                 encoding=alt.X, 
@@ -198,7 +202,8 @@ def _parse_encoding_jitter(encoding, data, sort):
                                           labels=False,
                                           values=nominal_axis_values,
                                           grid=False)),
-                        color=color)
+                        color=color,
+                        **extra_encodings)
         encoding_text = dict(y=_make_altair_encoding(
                                 '__jitter:Q',
                                 encoding=alt.Y, 
