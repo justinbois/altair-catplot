@@ -10,8 +10,7 @@ from .utils import (_check_catplot_transform,
                     _make_altair_encoding,
                     _get_column_name,
                     _get_data_type,
-                    _make_color_encoding_ecdf,
-                    _make_color_encoding_box_jitter)
+                    _make_color_encoding)
 
 def _box_plot(data, height, width, mark, box_mark, whisker_mark, encoding,
               sort, **kwargs):
@@ -33,8 +32,7 @@ def _box_plot(data, height, width, mark, box_mark, whisker_mark, encoding,
 
     # Marks
     (mark_box, mark_median, mark_whisker, mark_cap, mark_outliers,
-     white_median) = _parse_mark_box(mark, box_mark, whisker_mark, size, 
-                                     False)
+     white_median) = _parse_mark_box(mark, box_mark, whisker_mark, size)
 
     # Adjust encoding for white median
     if white_median:
@@ -140,15 +138,10 @@ def _box_dataframe(data, cat, val):
     return df_box, df_outliers
 
 
-def _parse_mark_box(mark, box_mark, whisker_mark, size, jitterbox):
+def _parse_mark_box(mark, box_mark, whisker_mark, size):
     """Parse mark for box plot."""
 
     # The box
-    if jitterbox and (box_mark == Undefined or 'filled' not in box_mark):
-        if box_mark == Undefined:
-            box_mark = dict(type='bar', size=size, filled=False)
-        else:
-            box_mark['filled'] = False
     if box_mark is None or box_mark == Undefined:
         mark_box = alt.MarkDef(type='bar', size=size)
     elif type(box_mark) != dict:
@@ -162,8 +155,6 @@ def _parse_mark_box(mark, box_mark, whisker_mark, size, jitterbox):
         if 'size' in box_mark:
             size = box_mark['size']
             del box_mark['size']
-        if jitterbox and 'filled' not in box_mark:
-            box_mark['filled'] = False
         mark_box = alt.MarkDef(type='bar', size=size, **box_mark)
 
     # Check whiskers
@@ -256,6 +247,7 @@ def _parse_encoding_box(encoding, sort):
             raise RuntimeError(err)
         cat = _get_column_name(x)
         val = _get_column_name(y)
+        color = _make_color_encoding(encoding, cat, sort)
 
         x = _make_altair_encoding(x,
                     encoding=alt.X, 
@@ -267,10 +259,6 @@ def _parse_encoding_box(encoding, sort):
             y.title = val
 
         horizontal = False
-        if 'color' in encoding and encoding['color'] != Undefined:
-            color = _make_color_encoding_box_jitter(encoding, cat, sort)
-        else:
-            color = Undefined
 
         # Box
         y.shorthand = 'bottom:Q'
@@ -317,6 +305,7 @@ def _parse_encoding_box(encoding, sort):
             raise RuntimeError(err)
         cat = _get_column_name(y)
         val = _get_column_name(x)
+        color = _make_color_encoding(encoding, cat, sort)
 
         y = _make_altair_encoding(y,
                     encoding=alt.Y, 
@@ -328,10 +317,6 @@ def _parse_encoding_box(encoding, sort):
             x.title = val
 
         horizontal = True
-        if 'color' in encoding and encoding['color'] != Undefined:
-            color = _make_color_encoding_box_jitter(encoding, cat, sort)
-        else:
-            color = Undefined
 
         # Box
         x.shorthand = 'bottom:Q'

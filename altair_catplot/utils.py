@@ -107,39 +107,22 @@ def _get_data_type(encoding):
         return UndefinedType
 
 
-def _make_color_encoding_ecdf(encoding, sort):
-    """Make color encodings for an ECDF plot."""
+def _make_color_encoding(encoding, cat, sort):
+    """Make color encodings."""
     if 'color' in encoding:
         color = _make_altair_encoding(encoding['color'], alt.Color)
-        color = _make_altair_encoding(color, alt.Color, 
-                    scale=_make_altair_encoding(
-                                color._kwds['scale'],
-                                encoding=alt.Scale, 
-                                domain=sort))
-        color_data_type = _get_data_type(color)
-        if color_data_type == UndefinedType:
+        if _get_column_name(color) == cat:
+            color = _make_altair_encoding(color, alt.Color, 
+                        scale=_make_altair_encoding(
+                                    color._kwds['scale'],
+                                    encoding=alt.Scale, 
+                                    domain=sort))
+        if _get_data_type(color) == UndefinedType:
             color = _make_altair_encoding(color,
                                           alt.Color,
                                           type='nominal')
-        cat = _get_column_name(color)
+        return color
     else:
-        color = Undefined
-        cat = None
+        return Undefined
 
     return color, cat
-
-
-def _make_color_encoding_box_jitter(encoding, cat, sort):
-    """Make color encodings for a box plot."""
-    color, _ = _make_color_encoding_ecdf(encoding, sort=sort)
-    if color is None:
-        color = Undefined
-    # if color is None:
-    #     color = _make_altair_encoding(cat,
-    #                 alt.Color, 
-    #                 type='nominal',
-    #                 scale=_make_altair_encoding(None,
-    #                                             alt.Scale,
-    #                                             domain=sort))
-
-    return color

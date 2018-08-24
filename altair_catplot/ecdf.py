@@ -10,8 +10,7 @@ from .utils import (_check_catplot_transform,
                     _make_altair_encoding,
                     _get_column_name,
                     _get_data_type,
-                    _make_color_encoding_ecdf,
-                    _make_color_encoding_box_jitter)
+                    _make_color_encoding)
 
 
 def _ecdf_plot(data, height, width, mark, encoding, complementary, 
@@ -304,7 +303,14 @@ def _parse_encoding_ecdf(encoding, complementary, sort):
         raise RuntimeError('`encoding` must be specified as a dict.')
 
     x, y, val = _make_xy_encoding_ecdf(encoding, complementary)
-    color, cat = _make_color_encoding_ecdf(encoding, sort)
+
+    # Need to run through color spec twice to get cat
+    color = _make_color_encoding(encoding, None, sort)
+    if color == Undefined:
+        cat = None
+    else:
+        cat = _get_column_name(color)
+        color = _make_color_encoding(encoding, cat, sort)
 
     # Build encoding for export
     encoding = {key: item for key, item in encoding.items() 

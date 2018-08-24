@@ -2,8 +2,6 @@
 
 """Top-level package for altair_catplot."""
 
-# Force showing deprecation warnings.
-
 from .catplot import catplot
 
 __author__ = """Justin Bois"""

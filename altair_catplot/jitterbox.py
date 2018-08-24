@@ -14,8 +14,7 @@ from .utils import (_check_catplot_transform,
                     _make_altair_encoding,
                     _get_column_name,
                     _get_data_type,
-                    _make_color_encoding_ecdf,
-                    _make_color_encoding_box_jitter)
+                    _make_color_encoding)
 
 
 def _jitterbox_plot(data, height, width, mark, box_mark, whisker_mark,
@@ -47,7 +46,7 @@ def _box_plot_q(data, height, width, mark, box_mark, whisker_mark, encoding,
 
     # Adjust as needed
     (mark_box, _, mark_whisker, _, _, white_median) = _parse_mark_box(
-            mark, box_mark, whisker_mark, jitter_width, True)
+            mark, box_mark, whisker_mark, jitter_width)
 
     # Encodings
     (encoding_box, encoding_median, encoding_bottom_whisker,
@@ -59,7 +58,7 @@ def _box_plot_q(data, height, width, mark, box_mark, whisker_mark, encoding,
     mark_median = mark_whisker.copy(deep=True)
     if white_median:
         mark_median['color'] = 'white'
-        mark_median['opacity']
+        mark_median['opacity'] = 1
     if mark_box['color'] != Undefined:
         encoding_box['color'] = Undefined
         encoding_median['color'] = Undefined
@@ -158,6 +157,7 @@ def _parse_encoding_box_q(encoding, sort, white_median):
             raise RuntimeError(err)
         cat = _get_column_name(x)
         val = _get_column_name(y)
+        color = _make_color_encoding(encoding, cat, sort)
 
         x = _make_altair_encoding(x,
                     encoding=alt.X, 
@@ -169,10 +169,6 @@ def _parse_encoding_box_q(encoding, sort, white_median):
             y.title = val
 
         horizontal = False
-        if 'color' in encoding and encoding['color'] != Undefined:
-            color = _make_color_encoding_box_jitter(encoding, cat, sort)
-        else:
-            color = Undefined
 
         # The box
         x = x.copy(deep=True)
@@ -223,6 +219,7 @@ def _parse_encoding_box_q(encoding, sort, white_median):
             raise RuntimeError(err)
         cat = _get_column_name(y)
         val = _get_column_name(x)
+        color = _make_color_encoding(encoding, cat, sort)
 
         y = _make_altair_encoding(y,
                     encoding=alt.Y, 
@@ -234,10 +231,6 @@ def _parse_encoding_box_q(encoding, sort, white_median):
             x.title = val
 
         horizontal = True
-        if 'color' in encoding and encoding['color'] != Undefined:
-            color = _make_color_encoding_box_jitter(encoding, cat, sort)
-        else:
-            color = Undefined
 
         # The box
         x = x.copy(deep=True)

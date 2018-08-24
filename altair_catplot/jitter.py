@@ -10,8 +10,7 @@ from .utils import (_check_catplot_transform,
                     _make_altair_encoding,
                     _get_column_name,
                     _get_data_type,
-                    _make_color_encoding_ecdf,
-                    _make_color_encoding_box_jitter)
+                    _make_color_encoding)
 
 
 def _jitter_plot(data, height, width, mark, encoding, jitter_width, sort,
@@ -158,7 +157,7 @@ def _parse_encoding_jitter(encoding, data, sort):
         if y.title == Undefined:
             y.title = val
 
-        color = _make_color_encoding_box_jitter(encoding, cat, sort)
+        color = _make_color_encoding(encoding, cat, sort)
 
         encoding = dict(x=_make_altair_encoding(
                             '__jitter:Q',
@@ -192,7 +191,7 @@ def _parse_encoding_jitter(encoding, data, sort):
         if x.title == Undefined:
             x.title = val
 
-        color = _make_color_encoding_box_jitter(encoding, cat, sort)
+        color = _make_color_encoding(encoding, cat, sort)
 
         encoding = dict(x=x,
                         y=_make_altair_encoding(
