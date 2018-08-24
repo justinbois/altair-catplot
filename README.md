@@ -3,15 +3,6 @@
 
 A utility to use Altair to generate box plots, jitter plots, and ECDFs, i.e. plots with a categorical variable where a data transformation not covered in Altair is required.
 
-
-```python
-import numpy as np
-import pandas as pd
-
-import altair as alt
-import altair_catplot as altcat
-```
-
 ## Motivation
 
 [Altair](https://altair-viz.github.io) is a Python interface for [Vega-Lite](http://vega.github.io/vega-lite). The resulting plots are easily displayed in JupyterLab and/or exported. The grammar of Vega-Lite which is largely present in Altair is well-defined, well-documented, and clear. This is one of many strong features of Altair and Vega-Lite.
@@ -29,6 +20,17 @@ You can install altair-catplot using pip.
     pip install altair-catplot
 
 ## Usage
+
+I will import Altair-catplot as `altcat`, and while I'm at it will import the other modules we need.
+
+
+```python
+import numpy as np
+import pandas as pd
+
+import altair as alt
+import altair_catplot as altcat
+```
 
 Every plot is made using the `altcat.catplot()` function. It has the following call signature.
 
@@ -152,7 +154,7 @@ altcat.catplot(df,
 
 
 
-![png](images.output_9_0.png)
+![png](images/output_10_0.png)
 
 
 
@@ -185,7 +187,7 @@ box
 
 
 
-![png](images.output_11_0.png)
+![png](images/output_12_0.png)
 
 
 
@@ -217,7 +219,7 @@ altcat.catplot(df,
 
 
 
-![png](images.output_14_0.png)
+![png](images/output_15_0.png)
 
 
 
@@ -239,7 +241,7 @@ alt.Chart(df
 
 
 
-![png](images.output_16_0.png)
+![png](images/output_17_0.png)
 
 
 
@@ -262,7 +264,7 @@ jitter
 
 
 
-![png](images.output_18_0.png)
+![png](images/output_19_0.png)
 
 
 
@@ -283,7 +285,7 @@ altcat.catplot(df,
 
 
 
-![png](images.output_20_0.png)
+![png](images/output_21_0.png)
 
 
 
@@ -324,7 +326,7 @@ box + jitter
 
 
 
-![png](images.output_22_0.png)
+![png](images/output_23_0.png)
 
 
 
@@ -345,7 +347,7 @@ altcat.catplot(df,
 
 
 
-![png](images.output_24_0.png)
+![png](images/output_25_0.png)
 
 
 
@@ -368,7 +370,7 @@ altcat.catplot(df,
 
 
 
-![png](images.output_26_0.png)
+![png](images/output_27_0.png)
 
 
 
@@ -392,7 +394,7 @@ altcat.catplot(df,
 
 
 
-![png](images.output_28_0.png)
+![png](images/output_29_0.png)
 
 
 
@@ -410,7 +412,7 @@ altcat.catplot(df,
 
 
 
-![png](images.output_30_0.png)
+![png](images/output_31_0.png)
 
 
 
@@ -432,7 +434,7 @@ alt.Chart(df
 
 
 
-![png](images.output_32_0.png)
+![png](images/output_33_0.png)
 
 
 
@@ -452,7 +454,7 @@ altcat.catplot(df,
 
 
 
-![png](images.output_34_0.png)
+![png](images/output_35_0.png)
 
 
 
@@ -477,6 +479,6 @@ altcat.catplot(df,
 
 
 
-![png](images.output_36_0.png)
+![png](images/output_37_0.png)
 
 
