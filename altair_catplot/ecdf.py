@@ -41,7 +41,6 @@ def _ecdf_plot(data, height, width, mark, encoding, complementary,
                      encoding=encoding,
                      **kwargs)
 
-
 def _ecdf_vals(data, formal=False, x_min=None, x_max=None):
     """Get x, y, values of an ECDF for plotting.
 
@@ -70,43 +69,45 @@ def _ecdf_vals(data, formal=False, x_min=None, x_max=None):
     y = np.arange(1, len(data)+1) / len(data)
 
     if formal:
-        # Set up output arrays
-        x_formal = np.empty(2*(len(x) + 1))
-        y_formal = np.empty(2*(len(x) + 1))
-
-        # y-values for steps
-        y_formal[:2] = 0
-        y_formal[2::2] = y
-        y_formal[3::2] = y
-
-        # x- values for steps
-        x_formal[0] = x[0]
-        x_formal[1] = x[0]
-        x_formal[2::2] = x
-        x_formal[3:-1:2] = x[1:]
-        x_formal[-1] = x[-1]
-        
-        # Put lines at y=0
-        if x_min is not None:
-            if x_min == 'infer':
-                x_min = x.min() - (x.max() - x.min())*0.05
-            elif x_min > x.min():
-                raise RuntimeError('x_min > x.min().')
-            x_formal = np.concatenate(((x_min,), x_formal))
-            y_formal = np.concatenate(((0,), y_formal))
-
-        # Put lines at y=y.max()
-        if x_max is not None:
-            if x_max == 'infer':
-                x_max = x.max() + (x.max() - x.min())*0.05
-            elif x_max < x.max():
-                raise RuntimeError('x_max < x.max().')
-            x_formal = np.concatenate((x_formal, (x_max,)))
-            y_formal = np.concatenate((y_formal, (y.max(),)))
-
-        return x_formal, y_formal
+        return _to_formal(x, y)
     else:
         return x, y
+
+
+def _to_formal(x, y, x_min, x_max):
+    """Convert to formal ECDF."""
+    # Set up output arrays
+    x_formal = np.empty(2*len(x))
+    y_formal = np.empty(2*len(x))
+
+    # y-values for steps
+    y_formal[0] = 0
+    y_formal[1::2] = y
+    y_formal[2::2] = y[:-1]
+
+    # x- values for steps
+    x_formal[::2] = x
+    x_formal[1::2] = x
+
+    # Put lines at y=0
+    if x_min is not None:
+        if x_min == 'infer':
+            x_min = x.min() - (x.max() - x.min())*0.05
+        elif x_min > x.min():
+            raise RuntimeError('x_min > x.min().')
+        x_formal = np.concatenate(((x_min,), x_formal))
+        y_formal = np.concatenate(((0,), y_formal))
+
+    # Put lines at y=y.max()
+    if x_max is not None:
+        if x_max == 'infer':
+            x_max = x.max() + (x.max() - x.min())*0.05
+        elif x_max < x.max():
+            raise RuntimeError('x_max < x.max().')
+        x_formal = np.concatenate((x_formal, (x_max,)))
+        y_formal = np.concatenate((y_formal, (y.max(),)))
+
+    return x_formal, y_formal
 
 
 def _ecdf_y(data, complementary=False):
