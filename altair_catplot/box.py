@@ -119,21 +119,21 @@ def _box_and_whisker(data):
 
 def _box_dataframe(data, cat, val):
     """Construct a data frame for making box plot."""
-    if cat is None:
-        grouped = data
+    if type(cat) in [list, tuple]:
+        level = list(range(len(cat)))
     else:
-        grouped = data.groupby(cat)
+        level = 0
+        
+    if cat is None:
+        grouped = df
+    else:
+        grouped = df.groupby(cat)
 
     # Data frame for boxes and whiskers
-    df_box = (grouped[val].apply(_box_and_whisker)
-                          .reset_index()
-                          .rename(columns={'level_1': 'box_val'})
-                          .pivot(index=cat, columns='box_val'))
-    df_box.columns = df_box.columns.get_level_values(1)
-    df_box = df_box.reset_index()
+    df_box = grouped[val].apply(_box_and_whisker).unstack().reset_index()
 
     # Data frame for outliers
-    df_outliers = grouped[val].apply(_outliers).reset_index(level=0)
+    df_outliers = grouped[val].apply(_outliers).reset_index(level=level)
 
     return df_box, df_outliers
 
