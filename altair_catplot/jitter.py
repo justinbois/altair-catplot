@@ -72,8 +72,8 @@ def _jitter(x, sort, jitter_width):
         centers = np.array([sort.index(c) for c in cats], dtype=float)
 
     return (centers
-            + np.random.uniform(low=-jitter_width,
-                                high=jitter_width,
+            + np.random.uniform(low=-jitter_width/2,
+                                high=jitter_width/2,
                                 size=len(x)))
 
 
@@ -84,8 +84,8 @@ def _check_altair_jitter_input(data, height, width, mark, encoding,
 Allowed values are ['point', 'circle', 'square', 'tick'].""")
     if data is None:
         raise RuntimeError('`data` must be specified.')
-    if not (0 <= jitter_width <= 0.5):
-        raise RuntimeError('Must have `jitter_width` between 0 and 0.5.')
+    if not (0 <= jitter_width <= 1):
+        raise RuntimeError('Must have `jitter_width` between 0 and 1.')
 
 
 def _jitter_domain(data, val, zero, pad=0.05):

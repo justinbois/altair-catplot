@@ -20,7 +20,7 @@ def catplot(data=None,
             encoding=Undefined,
             transform=None,
             sort=Undefined,
-            jitter_width=0.2,
+            jitter_width=0.4,
             box_mark=Undefined,
             whisker_mark=Undefined,
             box_overlay=False,
@@ -57,11 +57,9 @@ def catplot(data=None,
         A list containing the unique entries in the column of `data`
         corresponding to the categorical variable. The ordering of this
         list is used to order the glyphs in the chart.
-    jitter_width : float, default 0.2
-        Maximum fractional distance from the center line that points may
-        by jittered in a jitter plot. The total width of the displayed
-        jittered point is twice `jitterwidth`. Only active if 
-        `transform` is 'jitter' or 'jitterbox'.
+    jitter_width : float, default 0.4
+        Maximum fractional width that points may be jittered in a jitter 
+        plot. Only active if  `transform` is 'jitter' or 'jitterbox'.
     box_mark : dict
         A dict containing key-value pairs to be passed into 
         `alt.MarkDef()` to define the properties of boxes in box plots.
