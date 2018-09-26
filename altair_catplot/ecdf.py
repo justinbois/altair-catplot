@@ -69,7 +69,7 @@ def _ecdf_vals(data, formal=False, x_min=None, x_max=None):
     y = np.arange(1, len(data)+1) / len(data)
 
     if formal:
-        return _to_formal(x, y)
+        return _to_formal(x, y, x_min, x_max)
     else:
         return x, y
 

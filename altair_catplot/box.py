@@ -125,9 +125,9 @@ def _box_dataframe(data, cat, val):
         level = 0
         
     if cat is None:
-        grouped = df
+        grouped = data
     else:
-        grouped = df.groupby(cat)
+        grouped = data.groupby(cat)
 
     # Data frame for boxes and whiskers
     df_box = grouped[val].apply(_box_and_whisker).unstack().reset_index()
