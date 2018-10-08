@@ -131,10 +131,10 @@ def _box_dataframe_q(data, cat, val, jitter_width, sort):
     df_box['nominal_axis_value'] = centers
 
 
-    df_box['left'] = df_box['nominal_axis_value'] - jitter_width
-    df_box['right'] = df_box['nominal_axis_value'] + jitter_width
-    df_box['cap_left'] = df_box['nominal_axis_value'] - jitter_width/4
-    df_box['cap_right'] = df_box['nominal_axis_value'] + jitter_width/4
+    df_box['left'] = df_box['nominal_axis_value'] - jitter_width/2
+    df_box['right'] = df_box['nominal_axis_value'] + jitter_width/2
+    df_box['cap_left'] = df_box['nominal_axis_value'] - jitter_width/8
+    df_box['cap_right'] = df_box['nominal_axis_value'] + jitter_width/8
 
     return df_box
 
