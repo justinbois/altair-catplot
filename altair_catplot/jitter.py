@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pandas as pd
 
@@ -147,6 +149,12 @@ def _parse_encoding_jitter(encoding, data, sort):
     if _get_data_type(x) in 'NO':
         if _get_data_type(y) != 'Q':
             raise RuntimeError(err)
+
+        if x.title != Undefined:
+            warnings.warn(
+                'Categorical axis titles not allowed for jitter plots.' 
+                + ' Ignoring....')
+
         cat = _get_column_name(x)
         val = _get_column_name(y)
 
@@ -183,6 +191,11 @@ def _parse_encoding_jitter(encoding, data, sort):
             raise RuntimeError(err)
         cat = _get_column_name(y)
         val = _get_column_name(x)
+
+        if y.title != Undefined:
+            warnings.warn(
+                'Categorical axis titles not allowed for jitter plots.' 
+                + ' Ignoring....')
 
         val_axis = 'x'
 

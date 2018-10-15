@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pandas as pd
 
@@ -155,6 +157,13 @@ def _parse_encoding_box_q(encoding, sort, white_median):
     if _get_data_type(x) in 'NO':
         if _get_data_type(y) != 'Q':
             raise RuntimeError(err)
+
+        if x.title != Undefined:
+            warnings.warn(
+                'Categorical axis titles not allowed for jitter-box plots.' 
+                + ' Ignoring....')
+            x.title = Undefined
+
         cat = _get_column_name(x)
         val = _get_column_name(y)
         color = _make_color_encoding(encoding, cat, sort)
@@ -217,6 +226,13 @@ def _parse_encoding_box_q(encoding, sort, white_median):
     elif _get_data_type(y) in 'NO':
         if _get_data_type(x) != 'Q':
             raise RuntimeError(err)
+
+        if y.title != Undefined:
+            warnings.warn(
+                'Categorical axis titles not allowed for jitter-box plots.' 
+                + ' Ignoring....')
+            y.title = Undefined
+
         cat = _get_column_name(y)
         val = _get_column_name(x)
         color = _make_color_encoding(encoding, cat, sort)
